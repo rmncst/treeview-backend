@@ -30,7 +30,6 @@ namespace ItemsApi.Controllers
         ///
         /// POST /Item
         /// {
-        ///    id: "afb934f4-5551-4457-81ff-74073502d124",
         ///    name: "MyItem",
         ///    parentId: "4c06d4c6-22ea-46ed-88ac-a0c2831a0a43"
         /// }
@@ -42,7 +41,7 @@ namespace ItemsApi.Controllers
         [HttpPost()]
         public IActionResult Post(Item item)
         {
-            // TODO
+            Items.Add(item);
             return NoContent();
         }
 
