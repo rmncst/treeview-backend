@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ItemsApi.Models;
+using ItemsApi.Services;
+using System.Linq;
 
 namespace ItemsApi.Controllers
 {
@@ -9,7 +11,7 @@ namespace ItemsApi.Controllers
     [Route("[controller]")]
     public class ItemsController : ControllerBase
     {
-        private static readonly List<Item> Items = Item.Spawn();
+        private readonly ItemService BaseItemService = new ItemService();
 
         /// <summary>
         /// Lists all items.
@@ -19,7 +21,18 @@ namespace ItemsApi.Controllers
         [HttpGet]
         public IEnumerable<Item> Get()
         {            
-            return Items;
+            return BaseItemService.FindAll();
+        }
+
+        /// <summary>
+        /// Lists all items.
+        /// </summary>       
+        /// <returns></returns>   
+        /// <response code="200">Returns all items</response>
+        [HttpGet("{id}")]
+        public Item Get(string id)
+        {            
+            return BaseItemService.Find(Guid.Parse(id));
         }
 
         /// <summary>
@@ -39,10 +52,9 @@ namespace ItemsApi.Controllers
         /// <returns></returns>
         /// <response code="204">Returns no content</response>
         [HttpPost()]
-        public IActionResult Post(Item item)
+        public Item Post(Item item)
         {
-            Items.Add(item);
-            return NoContent();
+            return BaseItemService.Add(item);
         }
 
         /// <summary>
@@ -61,11 +73,16 @@ namespace ItemsApi.Controllers
         /// <param name="item"></param>        
         /// <returns></returns>
         /// <response code="204">Returns no content</response>
-        [HttpPatch("{id}")]
-        public IActionResult Put(Item item)
+        [HttpPut("{id}")]
+        public Item Put(string id, Item itemParameter)
         {
-            // TODO
-            return NoContent();
+            if(itemParameter == null)
+            {
+                return null;
+            }
+
+            itemParameter.Id = Guid.Parse(id);
+            return BaseItemService.Update(itemParameter);
         }
 
         /// <summary>
@@ -79,10 +96,10 @@ namespace ItemsApi.Controllers
         /// <returns></returns>
         /// <response code="204">Returns no content</response>
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public Item Delete(string id)
         {
-            // TODO
-            return NoContent();
+            var item = BaseItemService.Find(Guid.Parse(id));
+            return BaseItemService.Remove(item);
         }
     }
 }

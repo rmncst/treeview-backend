@@ -20,6 +20,22 @@ namespace ItemsApi.Models
         public IList<Item> Children { get; set; }
         public Guid? ParentId { get; set; }
 
+        public static Item Find(IEnumerable<Item> Items, Guid id) 
+        {
+            foreach(var item in Items) 
+            {
+                if(item.Id.Equals(id)) 
+                {
+                    return item;
+                }
+                else if(item.Children != null && item.Children.Count > 0) 
+                {
+                    return Item.Find(item.Children, id);                 
+                }
+            }        
+            return null;    
+        }
+
         public static List<Item> Spawn()
         {
             return new List<Item>()
