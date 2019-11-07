@@ -20,7 +20,7 @@ namespace ItemsApi.Controllers
         /// <response code="200">Returns all items</response>
         [HttpGet]
         public IEnumerable<Item> Get()
-        {            
+        {
             return BaseItemService.FindAll();
         }
 
@@ -31,7 +31,7 @@ namespace ItemsApi.Controllers
         /// <response code="200">Returns all items</response>
         [HttpGet("{id}")]
         public Item Get(string id)
-        {            
+        {
             return BaseItemService.Find(Guid.Parse(id));
         }
 
@@ -70,7 +70,8 @@ namespace ItemsApi.Controllers
         /// }
         ///
         /// </remarks>
-        /// <param name="item"></param>        
+        /// <param name="id"></param>        
+        /// <param name="itemParameter"></param>
         /// <returns></returns>
         /// <response code="204">Returns no content</response>
         [HttpPut("{id}")]

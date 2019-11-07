@@ -17,11 +17,23 @@ namespace ItemsApi
             Configuration = configuration;
         }
 
+        public readonly string DevPolicyCORS = "_DEV_POLICY";
+
         public IConfiguration Configuration { get; }
         
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddCors(opts =>
+            {
+                opts.AddPolicy(DevPolicyCORS,
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -44,6 +56,7 @@ namespace ItemsApi
             }
 
             app.UseSwagger();
+            app.UseCors(DevPolicyCORS);
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Items API");
