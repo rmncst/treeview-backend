@@ -38,22 +38,24 @@ namespace ItemsApi.Services
 
         public override Item Remove(Item itemRemove)
         {
-            if(itemRemove == null) 
-            {
-                return null;
-            }
+            return DeepRemove(ListItems, itemRemove.Id);
+        }
 
-            if(itemRemove.ParentId.HasValue) 
+        protected Item DeepRemove(IList<Item> Items, Guid id)
+        {
+            foreach (var item in Items)
             {
-                var parentItem = Find(itemRemove.ParentId.Value);
-                parentItem.Children.Remove(itemRemove);
+                if (item.Id.Equals(id))
+                {
+                    Items.Remove(item);
+                    return item;
+                }
+                else if (item.Children != null && item.Children.Count > 0)
+                {
+                    return DeepRemove(item.Children, id);
+                }
             }
-            else
-            {
-                ListItems.Remove(itemRemove);
-            }
-
-            return itemRemove;
+            return null;
         }
 
         public override Item Find(object id)
