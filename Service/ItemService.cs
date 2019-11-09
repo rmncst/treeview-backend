@@ -9,7 +9,7 @@ namespace ItemsApi.Services
     {
         private static List<Item> ListItems = Item.Spawn();
         
-        public Item Add(Item item)
+        public override Item Add(Item item)
         {
             if(item.ParentId.HasValue) 
             {
@@ -20,7 +20,7 @@ namespace ItemsApi.Services
                     return null;
                 }
 
-                itemParent.Children = item.Children ?? new List<Item>();
+                itemParent.Children ??= new List<Item>();
                 item.ParentId = itemParent.Id;
                 itemParent.Children.Add(item);                
             } 
@@ -36,9 +36,9 @@ namespace ItemsApi.Services
             return ListItems;
         }
 
-        public override Item Remove(Item itemRemove)
+        public override Item Remove(Item item)
         {
-            return DeepRemove(ListItems, itemRemove.Id);
+            return DeepRemove(ListItems, item.Id);
         }
 
         protected Item DeepRemove(IList<Item> Items, Guid id)
@@ -52,7 +52,11 @@ namespace ItemsApi.Services
                 }
                 else if (item.Children != null && item.Children.Count > 0)
                 {
-                    return DeepRemove(item.Children, id);
+                    var subItem = DeepRemove(item.Children, id);
+                    if(subItem != null)
+                    {
+                        return subItem;
+                    }
                 }
             }
             return null;
@@ -73,7 +77,11 @@ namespace ItemsApi.Services
                 }
                 else if(item.Children != null && item.Children.Count > 0) 
                 {
-                    return DeepFind(item.Children, id);                 
+                    var subItem = DeepFind(item.Children, id);
+                    if(subItem != null)
+                    {
+                        return subItem;
+                    }
                 }
             }        
             return null;    
